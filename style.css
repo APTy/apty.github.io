@@ -1,0 +1,8 @@
+@font-face {
+    font-family: public-sans;
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/uswds/2.0.2/fonts/public-sans/PublicSans-Regular.ttf');
+}
+
+body {
+    font-family: public-sans;
+}
