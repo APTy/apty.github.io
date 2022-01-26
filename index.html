@@ -6,8 +6,12 @@
 </head>
 <body>
 
-<h1>minter</h1>
-<p>Mint a token for an ERC-721 contract.</p>
+<div>
+  <h1>minter</h1>
+</div>
+<div>
+  <p>Mint a token for an ERC-721 contract.</p>
+</div>
 
 <div>
   <label for="token-address">Token Address</label>
@@ -19,14 +23,19 @@
   <input type="text" id="mint-price" value="0.01"/>
 </div>
 
-<button onclick="mint(this)">Mint</button>
-<p id="status"></p>
+<div>
+  <button onclick="mint(this)">Mint</button>
+  <p id="status"></p>
+</div>
 
 <script>
 async function mint(btn) {
   const tokenAddress = document.querySelector("#token-address").value;
   const mintPrice = document.querySelector("#mint-price").value;
   const status = document.querySelector("#status");
+
+  // Be nice and store the last token address
+  localStorage.setItem("token-address", tokenAddress);
 
   // Check the address field is filled out
   if (!tokenAddress) {
@@ -73,6 +82,9 @@ async function mint(btn) {
 
   status.innerText = "Success! Transaction hash: " + txn.hash + ". Confirmed on blockchain!";
 }
+
+// Get the cached token address if it's available.
+document.querySelector("#token-address").value = localStorage.getItem("token-address") || "";
 </script>
 </body>
 </html>

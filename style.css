@@ -6,3 +6,21 @@
 body {
     font-family: public-sans;
 }
+
+label {
+    width: 10%;
+}
+
+input {
+    width: 50%;
+}
+
+button {
+    width: 60%;
+}
+
+div {
+  display: flex;
+  justify-content: center;
+  height: 50px;
+}
