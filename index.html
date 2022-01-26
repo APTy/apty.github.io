@@ -8,13 +8,24 @@
 
 <h1>minter</h1>
 <p>Mint a token for an ERC-721 contract.</p>
-<input type="text" id="token-address"></input>
+
+<div>
+  <label for="token-address">Token Address</label>
+  <input type="text" id="token-address">
+</div>
+
+<div>
+  <label for="mint-price">Price</label>
+  <input type="text" id="mint-price" value="0.01"/>
+</div>
+
 <button onclick="mint(this)">Mint</button>
 <p id="status"></p>
 
 <script>
 async function mint(btn) {
   const tokenAddress = document.querySelector("#token-address").value;
+  const mintPrice = document.querySelector("#mint-price").value;
   const status = document.querySelector("#status");
 
   // Check the address field is filled out
@@ -48,8 +59,13 @@ async function mint(btn) {
       type: "function",
     },
   ];
-  const contract = new ethers.Contract(tokenAddress, contractAbi, signer);
-  const txn = await contract.mint({ value: ethers.utils.parseEther("0.01") });
+  try {
+    const contract = new ethers.Contract(tokenAddress, contractAbi, signer);
+    const txn = await contract.mint({ value: ethers.utils.parseEther(mintPrice) });
+  } catch (e) {
+    status.innerText = e.message;
+    return;
+  }
 
   // Wait for the transaction to be confirmed on the blockchain
   status.innerText = "Success! Transaction hash: " + txn.hash + ". Waiting for confirmation on blockchain...";
