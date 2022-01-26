@@ -17,23 +17,27 @@ async function mint(btn) {
   const tokenAddress = document.querySelector("#token-address").value;
   const status = document.querySelector("#status");
 
+  // Check the address field is filled out
   if (!tokenAddress) {
     status.innerText = "Token address field is required!";
     return;
   }
 
+  // Check the user has an ethereum enabled browser
   const ethereum = window.ethereum;
   if (!ethereum) {
     status.innerText = "Your browser doesn't have metamask!";
     return;
   }
 
+  // Check the user's wallet is connected to this website
   btn.disabled = true;
-  status.innerText = "Requesting access to your ethereum wallet...";
+  status.innerText = "Requesting to connect to your ethereum wallet...";
   const provider = new ethers.providers.Web3Provider(ethereum);
   await provider.send("eth_requestAccounts", []);
 
-
+  // Ask the user to sign the mint request
+  status.innerText = "Requesting a signature for the mint request...";
   const signer = provider.getSigner();
   const contractAbi = [
     {
@@ -44,12 +48,11 @@ async function mint(btn) {
       type: "function",
     },
   ];
-
   const contract = new ethers.Contract(tokenAddress, contractAbi, signer);
   const txn = await contract.mint({ value: ethers.utils.parseEther("0.01") });
 
+  // Wait for the transaction to be confirmed on the blockchain
   status.innerText = "Success! Transaction hash: " + txn.hash + ". Waiting for confirmation on blockchain...";
-
   const receipt = await txn.wait();
 
   status.innerText = "Success! Transaction hash: " + txn.hash + ". Confirmed on blockchain!";
