@@ -14,10 +14,10 @@
 
 <script>
 async function mint(btn) {
-  const tokenAddress = document.querySelector("#token-address");
+  const tokenAddress = document.querySelector("#token-address").value;
   const status = document.querySelector("#status");
 
-  if (!tokenAddress.value) {
+  if (!tokenAddress) {
     status.innerText = "Token address field is required!";
     return;
   }
