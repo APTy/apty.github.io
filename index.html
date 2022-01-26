@@ -2,13 +2,58 @@
 <html>
 <head>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 </head>
 <body>
 
-<h1>apty</h1>
-<p>
-hello
-</p>
+<h1>minter</h1>
+<p>Mint a token for an ERC-721 contract.</p>
+<input type="text" id="token-address"></input>
+<button onclick="mint(this)">Mint</button>
+<p id="status"></p>
 
+<script>
+async function mint(btn) {
+  const tokenAddress = document.querySelector("#token-address");
+  const status = document.querySelector("#status");
+
+  if (!tokenAddress.value) {
+    status.innerText = "Token address field is required!";
+    return;
+  }
+
+  const ethereum = window.ethereum;
+  if (!ethereum) {
+    status.innerText = "Your browser doesn't have metamask!";
+    return;
+  }
+
+  btn.disabled = true;
+  status.innerText = "Requesting access to your ethereum wallet...";
+  const provider = new ethers.providers.Web3Provider(ethereum);
+  await provider.send("eth_requestAccounts", []);
+
+
+  const signer = provider.getSigner();
+  const contractAbi = [
+    {
+      inputs: [],
+      name: "mint",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+  ];
+
+  const contract = new ethers.Contract(tokenAddress, contractAbi, signer);
+  const txn = await contract.mint({ value: ethers.utils.parseEther("0.01") });
+
+  status.innerText = "Success! Transaction hash: " + txn.hash + ". Waiting for confirmation on blockchain...";
+
+  const receipt = await txn.wait();
+
+  status.innerText = "Success! Transaction hash: " + txn.hash + ". Confirmed on blockchain!";
+}
+</script>
 </body>
 </html>
