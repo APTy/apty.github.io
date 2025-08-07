@@ -2,93 +2,11 @@
 <html>
 <head>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 </head>
 <body>
 
 <div>
-  <h1>minter</h1>
+  <h1>APTy</h1>
 </div>
-<div>
-  <p>Mint a token for an ERC-721 contract.</p>
-</div>
-
-<div>
-  <label for="token-address">Token Address</label>
-  <input type="text" id="token-address">
-</div>
-
-<div>
-  <label for="mint-price">Price</label>
-  <input type="text" id="mint-price" value="0.01"/>
-</div>
-
-<div>
-  <button onclick="mint(this)">Mint</button>
-</div>
-<div>
-  <p id="status"></p>
-</div>
-
-<script>
-async function mint(btn) {
-  const tokenAddress = document.querySelector("#token-address").value;
-  const mintPrice = document.querySelector("#mint-price").value;
-  const status = document.querySelector("#status");
-
-  // Be nice and store the last token address
-  localStorage.setItem("token-address", tokenAddress);
-
-  // Check the address field is filled out
-  if (!tokenAddress) {
-    status.innerText = "Token address field is required!";
-    return;
-  }
-
-  // Check the user has an ethereum enabled browser
-  const ethereum = window.ethereum;
-  if (!ethereum) {
-    status.innerText = "Your browser doesn't have metamask!";
-    return;
-  }
-
-  // Check the user's wallet is connected to this website
-  btn.disabled = true;
-  status.innerText = "Requesting to connect to your ethereum wallet...";
-  const provider = new ethers.providers.Web3Provider(ethereum);
-  await provider.send("eth_requestAccounts", []);
-
-  // Get a signer object and define the function signature that we want to invoke.
-  const signer = provider.getSigner();
-  const contractAbi = [
-    {
-      inputs: [],
-      name: "mint",
-      outputs: [],
-      stateMutability: "payable",
-      type: "function",
-    },
-  ];
-
-  try {
-    // Ask the user to sign the mint request
-    status.innerText = "Requesting a signature for the mint request...";
-    const contract = new ethers.Contract(tokenAddress, contractAbi, signer);
-    const txn = await contract.mint({ value: ethers.utils.parseEther(mintPrice) });
-
-    // Wait for the transaction to be confirmed on the blockchain
-    status.innerText = "Success! Transaction hash: " + txn.hash + ". Waiting for confirmation on blockchain...";
-    const receipt = await txn.wait();
-
-    status.innerText = "Success! Transaction hash: " + txn.hash + ". Confirmed on blockchain!";
-  } catch (e) {
-    status.innerText = e.message;
-    return;
-  }
-}
-
-// Get the cached token address if it's available.
-document.querySelector("#token-address").value = localStorage.getItem("token-address") || "";
-</script>
 </body>
 </html>
